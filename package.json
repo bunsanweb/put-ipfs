@@ -1,0 +1,7 @@
+{
+  "name": "put-ipfs",
+  "devDependencies": {
+    "local-web-server": "*",
+    "puppeteer": "*"
+  }
+}
