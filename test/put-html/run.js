@@ -6,7 +6,7 @@ const puppeteer = require("puppeteer");
 const port = 9000;
 const ws = LocalWebServer.create({port, directory: __dirname,});
 
-const timeout = 100 * 1000;
+const timeout = 300 * 1000;
 const finish = () => {
   let r = {};
   r.promise = new Promise((finish, error) => {
@@ -34,11 +34,13 @@ const finish = () => {
     const finished = finish();
     await page.exposeFunction("finish", finished.finish);
     const promise = page.goto(
-      `http://localhost:${port}`, {waitUntil: "networkidle0", timeout: 0});
+      `http://localhost:${port}`, {waitUntil: "networkidle0", timeout: timeout});
     setTimeout(finished.error, timeout, `timeout: ${timeout}ms`);
     await Promise.race([promise, finished.promise]);
+    await page.close();
   } finally {
     await browser.close();
     ws.server.close();
   }
+  process.exit(0);
 })().catch(console.error);

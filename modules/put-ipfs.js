@@ -44,7 +44,7 @@ const cleanupMFS = async node => {
   }
 };
 
-export const waitAccessible = async (base, pathList, options) => {
+export const waitAccessible = async (base, pathList, options = {}) => {
   outer: for (const path of pathList) {
     const url = `${base}${path}`;
     let timeout = 100;
@@ -53,7 +53,7 @@ export const waitAccessible = async (base, pathList, options) => {
         await new Promise(f => setTimeout(f, timeout * (1 + Math.random())));
         timeout *= 2;
         console.debug("await to fetch:", url);
-        const res = await fetch(url, {method: "HEAD"});
+        const res = await fetchImpl(options)(url, {method: "HEAD"});
         if (res.ok) continue outer;
         console.debug(`status of fetch ${url}:`, res.status);
       } catch (error) {
