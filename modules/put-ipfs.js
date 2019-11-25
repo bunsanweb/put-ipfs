@@ -11,6 +11,8 @@ const trial = options => {
     Math.max(1, Math.min(options.trial, 10)) : 10;
 };
 const checkReached = options => Boolean(options.checkReached);
+const doPin = options => Boolean(options.doPin);
+
 
 // put bundle
 export const put = async (node, bundle, options = {}) => {
@@ -27,7 +29,10 @@ export const put = async (node, bundle, options = {}) => {
     await node.files.flush("/");
     const root = await node.files.stat("/");
     const base = `${gateway(options)}/${root.hash}/`;
-    const pinset = await node.pin.add(root.hash);
+    if (doPin(options)) {
+      const pinset = await node.pin.add(root.hash);
+      console.debug("pinset:", pinset);
+    }
     if (checkReached(options)) {
       console.debug("await reached to gateway:", base);
       await waitAccessible(base, Object.keys(bundle), options);
