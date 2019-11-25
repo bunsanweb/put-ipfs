@@ -27,6 +27,6 @@ const main = async () => {
   
   console.log("[published url]", url);
   
-  window.finish();
+  if (typeof window.finish === "function") window.finish();
 };
 main().catch(err => console.error(err.message));
