@@ -9,6 +9,7 @@ const main = async () => {
     relay: {enabled: true, hop: {enabled: true, active: true}},
   });
   await node.ready;
+  window.ipfsNode = node;
   //console.log("IPFS version:", (await node.version()).version);
   //console.log(`Peer ID:`, (await node.id()).id);
 
@@ -23,7 +24,10 @@ const main = async () => {
 </html>`,
     "main.js": `document.body.append("Hello World");`,
   };
-  const url = await PutIpfs.put(node, bundle, {checkReached: true});
+  const url = await PutIpfs.put(node, bundle, {
+    checkReached: true,
+    //noPin: true,
+  });
   
   console.log("[published url]", url);
   

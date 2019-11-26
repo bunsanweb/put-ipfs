@@ -11,7 +11,7 @@ const trial = options => {
     Math.max(1, Math.min(options.trial, 10)) : 10;
 };
 const checkReached = options => Boolean(options.checkReached);
-const doPin = options => Boolean(options.doPin);
+const noPin = options => Boolean(options.noPin);
 
 
 // put bundle
@@ -29,12 +29,12 @@ export const put = async (node, bundle, options = {}) => {
     await node.files.flush("/");
     const root = await node.files.stat("/");
     const base = `${gateway(options)}/${root.hash}/`;
-    if (doPin(options)) {
+    if (!noPin(options)) {
       const pinset = await node.pin.add(root.hash);
-      console.debug("pinset:", pinset);
+      //console.debug("pinset:", pinset);
     }
     if (checkReached(options)) {
-      console.debug("await reached to gateway:", base);
+      //console.debug("await reached to gateway:", base);
       await waitAccessible(base, Object.keys(bundle), options);
     }
     return base;
@@ -57,12 +57,12 @@ export const waitAccessible = async (base, pathList, options = {}) => {
       try {
         await new Promise(f => setTimeout(f, timeout * (1 + Math.random())));
         timeout *= 2;
-        console.debug("await to fetch:", url);
+        //console.debug("await to fetch:", url);
         const res = await fetchImpl(options)(url, {method: "HEAD"});
         if (res.ok) continue outer;
-        console.debug(`status of fetch ${url}:`, res.status);
+        //console.debug(`status of fetch ${url}:`, res.status);
       } catch (error) {
-        console.debug(`error when fetch ${url}:`, error);
+        //console.debug(`error when fetch ${url}:`, error);
       }
     }
   }
