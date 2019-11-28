@@ -24,7 +24,7 @@ export const put = async (node, bundle, options = {}) => {
     for (const [path, content] of Object.entries(bundle)) {
       if (!path) continue;
       await node.files.write(
-        `/${path}`, Buffer.from(content), {create: true});
+        `/${path}`, Buffer.from(content), {create: true, parents: true});
     }
     await node.files.flush("/");
     const root = await node.files.stat("/");
