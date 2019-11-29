@@ -17,12 +17,12 @@ const main = async () => {
     "index.html": `
 <html>
 <head>
-<script type="module" src="./main.js"></script>
+<script type="module" src="./modules/main.js"></script>
 </head>
 <body>
 </body>
 </html>`,
-    "main.js": `document.body.append("Hello World");`,
+    "modules/main.js": `document.body.append("Hello World");`,
   };
   const url = await PutIpfs.put(node, bundle, {
     checkReached: true,

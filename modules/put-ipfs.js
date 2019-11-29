@@ -12,7 +12,7 @@ const trial = options => {
 };
 const checkReached = options => Boolean(options.checkReached);
 const noPin = options => Boolean(options.noPin);
-
+const waitWithGet = options => Boolean(options.waitWithGet);
 
 // put bundle
 export const put = async (node, bundle, options = {}) => {
@@ -58,8 +58,12 @@ export const waitAccessible = async (base, pathList, options = {}) => {
         await new Promise(f => setTimeout(f, timeout * (1 + Math.random())));
         timeout *= 2;
         //console.debug("await to fetch:", url);
-        const res = await fetchImpl(options)(url, {method: "HEAD"});
-        if (res.ok) continue outer;
+        const method = waitWithGet(options) ? "GET" : "HEAD";
+        const res = await fetchImpl(options)(url, {method});
+        if (res.ok) {
+          if (waitWithGet(options)) await res.blob();
+          continue outer;
+        }
         //console.debug(`status of fetch ${url}:`, res.status);
       } catch (error) {
         //console.debug(`error when fetch ${url}:`, error);
