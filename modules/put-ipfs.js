@@ -6,6 +6,9 @@ const gateway = options => {
 const fetchImpl = options => {
   return typeof options.fetch === "function" ? options.fetch : fetch;
 };
+const cryptoImpl = options => {
+  return typeof options.crypto === "object" ? options.crypto : crypto;
+};
 const trial = options => {
   return Number.isInteger(options.trial) ?
     Math.max(1, Math.min(options.trial, 10)) : 10;
@@ -18,16 +21,16 @@ const waitWithGet = options => Boolean(options.waitWithGet);
 export const put = async (node, bundle, options = {}) => {
   // bundle as: {"index.html": "<body>Hello</body>", [path1]: data1, ...}
   await node.ready;
-  await cleanupMFS(node);
+  const tmp = await tmpRoot(node, options);
   try {
     const {Buffer} = node.constructor;
     for (const [path, content] of Object.entries(bundle)) {
       if (!path) continue;
       await node.files.write(
-        `/${path}`, Buffer.from(content), {create: true, parents: true});
+        `${tmp}${path}`, Buffer.from(content), {create: true, parents: true});
     }
-    await node.files.flush("/");
-    const root = await node.files.stat("/");
+    await node.files.flush(tmp);
+    const root = await node.files.stat(tmp);
     const base = `${gateway(options)}/${root.hash}/`;
     if (!noPin(options)) {
       const pinset = await node.pin.add(root.hash);
@@ -39,14 +42,29 @@ export const put = async (node, bundle, options = {}) => {
     }
     return base;
   } finally {
-    await cleanupMFS(node);    
+    await cleanupMFS(node, tmp);
   }
 };
 
-const cleanupMFS = async node => {
-  for (const {name} of await node.files.ls("/")) {
-    await node.files.rm(`/${name}`, {recursive: true});
+const tmpRoot = async  (node, options) => {
+  while (true) {
+    const randValue = cryptoImpl(options).getRandomValues(new Uint8Array(32));
+    const tmpName = "".concat(
+      ...Array.from(randValue, u8 => u8.toString(16).padStart(2, "0")));
+    const tmp = `/tmp/${tmpName}/`;
+    try {
+      const stat = await node.files.stat(tmp);
+      // existed: retry
+      continue;
+    } catch (error) {
+      // not existed: use it
+      return tmp;
+    }
   }
+};
+
+const cleanupMFS = async (node, root) => {
+  await node.files.rm(root, {recursive: true});
 };
 
 export const waitAccessible = async (base, pathList, options = {}) => {
