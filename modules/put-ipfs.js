@@ -6,8 +6,9 @@ const gateway = options => {
 const fetchImpl = options => {
   return typeof options.fetch === "function" ? options.fetch : fetch;
 };
-const cryptoImpl = options => {
-  return typeof options.crypto === "object" ? options.crypto : crypto;
+const getRandomValues = options => {
+  return typeof options.getRandomValues === "function" ?
+    options.getRandomValues : crypto.getRandomValues.bind(crypto);
 };
 const trial = options => {
   return Number.isInteger(options.trial) ?
@@ -48,7 +49,7 @@ export const put = async (node, bundle, options = {}) => {
 
 const tmpRoot = async  (node, options) => {
   while (true) {
-    const randValue = cryptoImpl(options).getRandomValues(new Uint8Array(32));
+    const randValue = getRandomValues(options)(new Uint8Array(32));
     const tmpName = "".concat(
       ...Array.from(randValue, u8 => u8.toString(16).padStart(2, "0")));
     const tmp = `/tmp/${tmpName}/`;
