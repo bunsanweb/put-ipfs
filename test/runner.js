@@ -1,4 +1,5 @@
 import path from "path";
+import nodeUrl from "url";
 
 import LocalWebServer from "local-web-server";
 import puppeteer from "puppeteer";
@@ -32,7 +33,13 @@ export const run = async (urlPorts, opts = {}) => {
       guard.finish();
     }
     await pagePromise;
-    await page.close();
+    if (opts.launch && opts.launch.headless === false) {
+      const pageGuard = newGuard();
+      page.on("close", pageGuard.finish);
+      await pageGuard.promise;
+    } else {
+      await page.close();
+    }
   } finally {
     await browser.close();
     wss.forEach(ws => ws.server.close());
@@ -40,8 +47,8 @@ export const run = async (urlPorts, opts = {}) => {
 };
 
 export const runLWS = (url, port) => {
-  const file = new URL(url).pathname;
-  const directory = file.endsWith("/") ? file : path.dirname(file);
+  const file = nodeUrl.fileURLToPath(url);
+  const directory = file.endsWith(path.sep) ? file : path.dirname(file);
   return LocalWebServer.create({port, directory});
 };
 
