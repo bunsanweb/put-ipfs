@@ -2,6 +2,7 @@ import * as runner from "../runner.js";
 
 runner.run([
   [import.meta.url, 9000],
+  [new URL("../../modules/", import.meta.url), 10000],
 ], {
   launch: {
     //headless: false, appMode: true, devtools: true,

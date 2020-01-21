@@ -1,7 +1,9 @@
 {
   "name": "put-ipfs",
   "type": "module",
-  "engines": {"node": ">=13.2.0"},
+  "engines": {
+    "node": ">=13.2.0"
+  },
   "devDependencies": {
     "local-web-server": "*",
     "puppeteer": "*"

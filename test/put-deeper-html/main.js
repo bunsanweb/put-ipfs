@@ -1,4 +1,4 @@
-import * as PutIpfs from "./modules/put-ipfs.js";
+import * as PutIpfs from "http://localhost:10000/put-ipfs.js";
 import "https://cdn.jsdelivr.net/npm/ipfs/dist/index.js";
 //console.log(window.Ipfs);
 
