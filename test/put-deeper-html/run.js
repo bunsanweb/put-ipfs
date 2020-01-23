@@ -1,4 +1,4 @@
-import * as runner from "../runner.js";
+import * as runner from "test-on-puppeteer";
 
 runner.run([
   [import.meta.url, 9000],

@@ -5,7 +5,6 @@
     "node": ">=13.2.0"
   },
   "devDependencies": {
-    "local-web-server": "*",
-    "puppeteer": "*"
+    "test-on-puppeteer": "bunsanweb/test-on-puppeteer#master"
   }
 }

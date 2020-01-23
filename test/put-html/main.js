@@ -1,17 +1,17 @@
 import * as PutIpfs from "http://localhost:10000/put-ipfs.js";
 import "https://cdn.jsdelivr.net/npm/ipfs/dist/index.js";
-//console.log(window.Ipfs);
+//console.debug(window.Ipfs);
 
 const main = async () => {
-  console.log("[INFO] IPFS node spawn several logs includes WebSocket Errors");
+  console.info("[INFO] IPFS node spawn several logs includes WebSocket Errors");
   const node = new Ipfs({
     repo: `ipfs-${Math.random()}`,
     relay: {enabled: true, hop: {enabled: true, active: true}},
   });
   await node.ready;
   window.ipfsNode = node;
-  //console.log("IPFS version:", (await node.version()).version);
-  //console.log(`Peer ID:`, (await node.id()).id);
+  //console.debug("IPFS version:", (await node.version()).version);
+  //console.debug(`Peer ID:`, (await node.id()).id);
 
   const bundle = {
     "index.html": `
@@ -30,7 +30,7 @@ const main = async () => {
     waitWithGet: true,
   });
   
-  console.log("[published url]", url);
+  console.info("[published url]", url);
   
   if (typeof window.finish === "function") window.finish();
 };
