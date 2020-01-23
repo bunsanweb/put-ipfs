@@ -6,5 +6,10 @@
   },
   "devDependencies": {
     "test-on-puppeteer": "bunsanweb/test-on-puppeteer#master"
+  },
+  "scripts": {
+    "t:put-html": "node test/put-html/run.js",
+    "t:put-deeper-html": "node test/put-deeper-html/run.js",
+    "test": "npm run t:put-html && npm run t:put-deeper-html"
   }
 }
