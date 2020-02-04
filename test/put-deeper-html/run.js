@@ -4,6 +4,7 @@ runner.run([
   [import.meta.url, 9000],
   [new URL("../../modules/", import.meta.url), 10000],
 ], {
+  browser: "all",
   launch: {
     //headless: false, appMode: true, devtools: true,
     //args: ["--disable-web-security"],
