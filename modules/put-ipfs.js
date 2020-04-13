@@ -24,17 +24,16 @@ export const put = async (node, bundle, options = {}) => {
   await node.ready;
   const tmp = await tmpRoot(node, options);
   try {
-    const {Buffer} = node.constructor;
     for (const [path, content] of Object.entries(bundle)) {
       if (!path) continue;
       await node.files.write(
-        `${tmp}${path}`, Buffer.from(content), {create: true, parents: true});
+        `${tmp}${path}`, content, {create: true, parents: true});
     }
     await node.files.flush(tmp);
     const root = await node.files.stat(tmp);
-    const base = `${gateway(options)}/${root.hash}/`;
+    const base = `${gateway(options)}/${root.cid.toString()}/`;
     if (!noPin(options)) {
-      const pinset = await node.pin.add(root.hash);
+      const pinset = await node.pin.add(root.cid);
       //console.debug("pinset:", pinset);
     }
     if (checkReached(options)) {
@@ -80,7 +79,10 @@ export const waitAccessible = async (base, pathList, options = {}) => {
         const method = waitWithGet(options) ? "GET" : "HEAD";
         const res = await fetchImpl(options)(url, {method});
         if (res.ok) {
-          if (waitWithGet(options)) await res.blob();
+          if (waitWithGet(options)) {
+            const blob = await res.blob();
+            //console.debug(blob.size, blob.type);
+          }
           continue outer;
         }
         //console.debug(`status of fetch ${url}:`, res.status);
