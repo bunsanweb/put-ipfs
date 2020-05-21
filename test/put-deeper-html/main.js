@@ -14,15 +14,15 @@ const main = async () => {
   //console.debug(`Peer ID:`, (await node.id()).id);
 
   const bundle = {
-    "index.html": `
+    "index.html": new Blob([`
 <html>
 <head>
 <script type="module" src="./modules/main.js"></script>
 </head>
 <body>
 </body>
-</html>`,
-    "modules/main.js": `document.body.append("Hello World");`,
+</html>`]),
+    "modules/main.js": new Blob([`document.body.append("Hello World");`]),
   };
   const url = await PutIpfs.put(node, bundle, {
     checkReached: true,
